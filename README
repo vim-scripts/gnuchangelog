@@ -1,0 +1,13 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=1631
+
+Enhances the default changelog support with a global mapping that opens and adds an entry in the appropriate ChangeLog file.  The entry now includes the edited filename and if configured, the class/method/function name.  The function that finds the class/method/function name can be configured with filetype plugins so that one can use different tag searchers for different languages.
+
+The ChangeLog file is only edited if it already exists, which  is searched upwards starting in the directory where the  edited file is located.  If the corresponding ChangeLog file is already opened, the script either splits the window to edit the buffer or switches to the window where the buffer is already opened.
+
+This behavior is identical to how emacs handles ChangeLog  files with the change-log-mode provided by C-x 4 a.
+
+See also:
+
+http://gnudist.gnu.org/software/emacs/manual/html_node/Change-Log.html
+http://www.gnu.org/prep/standards/html_node/Change-Log-Concepts.html
+
