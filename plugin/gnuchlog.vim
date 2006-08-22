@@ -1,9 +1,9 @@
 " Vim changelog plugin file
 "
-" $Id: gnuchlog.vim 19518 2006-08-11 18:02:22Z lpc $
+" $Id: gnuchlog.vim 19642 2006-08-22 19:25:14Z lpc $
 "
 " Maintainer:  Luis P Caamano <lcaamano@gmail.com>
-" Last Change: $Date: 2006-08-11 14:02:22 -0400 (Fri, 11 Aug 2006) $
+" Last Change: $Date: 2006-08-22 15:25:14 -0400 (Tue, 22 Aug 2006) $
 " Credits:     Based on the changelog.vim filetype plugin written by
 "              Nikolai Weibull <now@bitwi.se>
 "
@@ -41,6 +41,13 @@
 "       description: the username to use in ChangeLog entries
 "       default: try to deduce it from environment variables (EMAIL)
 "       and system files.
+"   g:changelog_relativepath
+"       description: controls how to build the path name of the edited file
+"       that is included in the title of the ChangeLog entry.  If true,
+"       the path name is built relative to the directory where the ChangeLog
+"       file is.  Otherwise, only the edited file's basename is used.
+"       Patch provided by Donald Curtis <donald-curtis@uiowa.edu>
+"       default: 1
 "   b:changelog_tagfinder -
 "       a reference to a function that returns a string that represents
 "       the class, method or function where the cursor was when the user
@@ -110,6 +117,11 @@ set cpo&vim
 " Set up the format used for dates.
 if !exists('g:changelog_dateformat')
     let g:changelog_dateformat = "%Y-%m-%d"
+endif
+
+" Set up including relative path.
+if !exists('g:changelog_relativepath')
+    let g:changelog_relativepath = 1
 endif
 
 " Try to figure out a reasonable username of the form:
@@ -265,7 +277,6 @@ endfunction
 
 function! s:Open()
     " gather info about the file we're editing
-    let fname = expand("%:t")
     let funcname = s:getFuncName()
 
     " Search for the ChangeLog file to edit starting up
@@ -275,6 +286,17 @@ function! s:Open()
     " don't do anything if we can't find the file
     if !filereadable(s:changelog)
         return
+    endif
+
+    " compare the ChangeLog directory and get the difference
+    " ie. include the filenames path relative to ChangeLog
+    if g:changelog_relativepath == 1
+        let fname = expand("%:p")
+        let changelogdir = fnamemodify(s:changelog, ":p:h")
+        let m = matchend(fname, changelogdir) + 1
+        let fname = fname[(m):]
+    else
+        let fname = expand("%:t")
     endif
 
     " see if we already opened the changelog file
@@ -312,4 +334,5 @@ nmap <silent> <Plug>GnuchlogOpen :call <SID>Open()<CR>
 " Restore Options
 let &fo = s:keepfo
 let &cpo= s:keepcpo
+
 
